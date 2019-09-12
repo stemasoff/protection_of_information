@@ -47,3 +47,5 @@ elif action == 2:
     decode_text = code(decode, crypt)
     with open('decoded.txt', 'w', encoding='utf-8') as out:
         out.write(decode_text)
+else:
+    print('Неверный ввод!')
