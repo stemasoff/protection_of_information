@@ -22,9 +22,9 @@ def code(ofset, text):
             encoded_text = encoded_text + i
     return encoded_text
 # Реализация работы с пользователем
-action = int(input('Выберите действие. Зашифровать - 1, Расшифровать - 2: '))
+action = input('Выберите действие. Зашифровать - 1, Расшифровать - 2: ')
 # Шифрование
-if action == 1:
+if action == '1':
     # Открываем файл, который нужно зашифровать
     with open('text.txt', 'r', encoding='utf-8') as inpt:
         text = inpt.read()
@@ -33,7 +33,7 @@ if action == 1:
     with open('encoded.txt', 'w', encoding='utf-8') as out:
         out.write(crypt)
 # Взлом шифра
-elif action == 2:
+elif action == '2':
     with open('encoded.txt', 'r', encoding='utf-8') as inpt:
         crypt = inpt.read()
     # Сбор статистики в список
