@@ -6,7 +6,7 @@ def s_block_generate(text_or_cipher, key, n):
     :param text_or_cipher: Текст или шифр, на основе которого нужно сгенерировать s_block
     :param key: Пользовательский ключ
     :param n: Количество бит
-    :return: Шифрограмма s_block(list int)
+    :return: Ключевлой поток s_block(list int)
     '''
 
     #   Инициализация KSA(key-scheduling algorithm)
@@ -43,11 +43,11 @@ def encode(text, s_block):
     '''
     Шифрование
     :param Text: Текст, который нужно зашифровать
-    :param s_block: Шифрограмма
+    :param s_block: Ключевой поток
     :return: Шифр(list int)
     '''
 
-    # Сложение по модулю 2 i-го элемента шифрограммы и ascii-кода символа в тексте.
+    # Сложение по модулю 2 i-го элемента ключевого потока и ascii-кода символа в тексте.
     cipher = [xor(ord(text[i]), s_block[i]) for i in range(len(text))]
     return cipher
 
@@ -56,7 +56,7 @@ def decode(cipher, s_block):
     '''
     Расшифровка
     :param cipher: Шифр
-    :param s_block: Шифрограмма
+    :param s_block: Ключевой поток
     :return: Расшифрованный текст(str)
     '''
     decoded_text = str()

@@ -11,7 +11,7 @@ if action == '1':
         # Открываем исходный файл и записываем данные из него в переменную data.
         data = inpt_data.read()
 
-    # Генерируем шифрограмму и шифруем исходные данные
+    # Генерируем ключевой поток и шифруем исходные данные
     s_block = RC4.s_block_generate(data, key, n)
     encoded_data = RC4.encode(data, s_block)
 
@@ -24,7 +24,7 @@ else:
         # Открываем файл с шифром и записываем данные из него в переменную data.
         data = inpt_data.read().split()
 
-    # Повторно генерируем шифрограмму и расшифровываем данные.
+    # Повторно генерируем ключевой поток и расшифровываем данные.
     s_block = RC4.s_block_generate(data, key, n)
     decoded_data = RC4.decode(data, s_block)
 
