@@ -1,25 +1,26 @@
+# Не готово, в планах еще подключить ГСПЧ для стегоконтейнера
 from PIL import Image, ImageDraw
 
 
-def encoding(text):
+def encoding(picture, text):
     '''
     Функция шифрования текста в картинке.
+    :param picture: картинка, в которую будет помещен стего
     :param text: текст, который необходимо зашифровать
-    :return: создает картинку с зашифрованным текстом
+    :return:
     '''
-    img = Image.open('Lenna.png')
+    img = Image.open(picture)
     draw = ImageDraw.Draw(img)
     width = img.size[0]
     height = img.size[1]
     pix = img.load()
     exitFlag = False
-    text_cipher = ''
+    temp_cipher = ''
 
     for i in text:
         # Цикл для перевода букв из текста в двоичный код.
-        text_cipher = text_cipher + '0' * (8 - len(format(ord(i), 'b'))) + format(ord(i), 'b')
-    cipher = [text_cipher[i:i + 2] for i in range(0, len(text_cipher), 2)]
-
+        temp_cipher = temp_cipher + '0' * (8 - len(format(ord(i), 'b'))) + format(ord(i), 'b')
+    cipher = [temp_cipher[i:i + 2] for i in range(0, len(temp_cipher), 2)]
     for i in range(height):
         for j in range(width):
             # Считываем RGB пиксели в двоичном виде
@@ -38,71 +39,35 @@ def encoding(text):
                 break
         if exitFlag is True:
             break
-
     img.save('result.png', 'png')
+    print('Длина зашифрованного сообщения: {}'.format(len(text)))
 
 
-def decoding(image, lendth):
+def decoding(picture, lendth):
     '''
     Функция раскодирования.
-    :param image: Картинка с зашифрованными данными
+    :param picture: Картинка с зашифрованными данными
     :param lendth: Длина зашифрованного сообщения
     :return:
     '''
-    img = Image.open(image)
+    img = Image.open(picture)
     width = img.size[0]
     height = img.size[1]
     pix = img.load()
     cipher = ''
-    exitFlag = False
     decoded_text = ''
 
-    for i in range(height):
-        for j in range(width):
-            # Считываем последние два
-            cipher = cipher + format(pix[i, j][0], 'b')[-2:]
-            cipher = cipher + format(pix[i, j][1], 'b')[-2:]
-            cipher = cipher + format(pix[i, j][2], 'b')[-2:]
-            if (i + 1) * (j + 1) >= int(lendth * (4 / 3)):
-                exitFlag = True
-                break
-        if exitFlag == True:
-            break
-    # Переводим двоичный код в текст
-    text_cipher = [cipher[i:i + 8] for i in range(0, len(cipher), 8)]
-    for i in text_cipher:
-        decoded_text = decoded_text + chr(int(i, 2))
-
-    return decoded_text
-
-
-
-
-'''
-Мои попытки сделать статистический анализ пикселей и взломать шифр
-def decoding(image):
-    img = Image.open(image)
-    draw = ImageDraw.Draw(img)
-    width = img.size[0]
-    height = img.size[1]
-    pix = img.load()
-    red_array = list()
-
-    for i in range(height):
-        for j in range(width):
-            red_array.append(pix[i, j][0])
-
-    histogram = list()
-    expected = list()
-    observed = list()
-
-    for i in range(0, 256):
-        histogram.append(red_array.count(i))
-
-    for k in range(0, len(histogram) // 2):
-        expected.append(((histogram[2 * k] + histogram[2 * k + 1]) / 2))
-        observed.append(histogram[2 * k])
-        x = (observed[k] - expected[k]) ** 2 / expected[k]
-    print(expected)
-    print(observed)
-'''
+    try:
+        for i in range(height):
+            for j in range(width):
+                # Считываем последние два бита в каождом из каналов
+                for color in range(3):
+                    cipher = cipher + format(pix[i, j][color], 'b')[-2:]
+                    if len(cipher) == lendth * 8:
+                        raise Exception
+    except Exception:
+        # Переводим двоичный код в текст
+        text_cipher = [cipher[i:i + 8] for i in range(0, len(cipher), 8)]
+        for i in text_cipher:
+            decoded_text = decoded_text + chr(int(i, 2))
+        return decoded_text
